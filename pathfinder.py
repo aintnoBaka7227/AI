@@ -7,7 +7,7 @@ from collections import deque
 import heapq
 
 def bfs(rows, cols, start, end, grid):
-    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]  
+    dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)]  
     q = deque([(start, [start])])
     visited = set()
     
@@ -22,7 +22,7 @@ def bfs(rows, cols, start, end, grid):
             continue
         visited.add(curr)
         
-        for dr, dc in directions: 
+        for dr, dc in dirs: 
             nr, nc = r + dr, c + dc
             if 1 <= nr <= rows and 1 <= nc <= cols:
                 if grid[nr - 1][nc - 1] != 'X' and (nr, nc) not in visited:
@@ -33,12 +33,13 @@ def bfs(rows, cols, start, end, grid):
 def ucs(rows, cols, start, end, grid):
     directions = [(-1, 0), (1, 0), (0, -1), (0, 1)] 
     
-    pq = [(0, start)]
+    pq = []
+    count = 0
     came_from = {start: None}
     cost_so_far = {start: 0}
-    
+    heapq.heappush(pq, (0, count, start))
     while pq:
-        cost, (x, y) = heapq.heappop(pq)
+        cost, _, (x, y) = heapq.heappop(pq)
         if (x, y) == end:
             return reconstruct_path(came_from, start, end)
         
@@ -47,10 +48,11 @@ def ucs(rows, cols, start, end, grid):
             if 1 <= neighbor[0] <= rows and 1 <= neighbor[1] <= cols:
                 if grid[neighbor[0] - 1][neighbor[1] - 1] != 'X':
                     elevation_diff = int(grid[neighbor[0] - 1][neighbor[1] - 1]) - int(grid[x - 1][y - 1])
-                    new_cost = cost_so_far[(x, y)] + 1 + max(0, elevation_diff)
+                    new_cost = cost + 1 + max(0, elevation_diff)
                     if neighbor not in cost_so_far or new_cost < cost_so_far[neighbor]:
                         cost_so_far[neighbor] = new_cost
-                        heapq.heappush(pq, (new_cost, neighbor))
+                        count += 1
+                        heapq.heappush(pq, (new_cost, count, neighbor))
                         came_from[neighbor] = (x, y)
     return None
 
