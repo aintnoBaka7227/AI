@@ -264,15 +264,15 @@ def main():
             print("#visits:")
             max_width = max(len(str(cell)) for row in visits for cell in row)
             for row in visits:
-                print("  ".join(str(cell).rjust(max_width) for cell in row))
+                print(" ".join(str(cell).rjust(max_width) for cell in row))
             print("\nfirst visit:")
             max_width = max(len(str(cell)) for row in first_visit for cell in row)
             for row in first_visit:
-                print("  ".join(str(cell).rjust(max_width) for cell in row))
+                print(" ".join(str(cell).rjust(max_width) for cell in row))
             print("\nlast visit:")
             max_width = max(len(str(cell)) for row in last_visit for cell in row)
             for row in last_visit:
-                print("  ".join(str(cell).rjust(max_width) for cell in row))
+                print(" ".join(str(cell).rjust(max_width) for cell in row))
                         
 
 if __name__ == "__main__":
