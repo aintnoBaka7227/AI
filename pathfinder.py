@@ -65,9 +65,9 @@ def bfs_func(rows, cols, start, end, grid):
                         first_visit[neighbor[0] - 1][neighbor[1] - 1] = visit_count
                     last_visit[neighbor[0] - 1][neighbor[1] - 1] = visit_count
                     visit_count += 1
-                    
-                if neighbor not in visited:
-                    q.append((neighbor, path + [neighbor]))
+                    if neighbor not in visited:
+                        q.append((neighbor, path + [(neighbor[0], neighbor[1])]))
+                
                     
     for i in range(rows):
         for j in range(cols):
