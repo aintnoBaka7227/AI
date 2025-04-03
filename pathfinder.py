@@ -25,19 +25,11 @@ def bfs_func(rows, cols, start, end, grid):
     visits[start[0] - 1][start[1] - 1] += 1
     first_visit[start[0] - 1][start[1] - 1] = visit_count
     last_visit[start[0] - 1][start[1] - 1] = visit_count
+    visit_count += 1
     
     while q: 
         curr, path = q.popleft()
         r, c = curr
-        
-        # if visits[r - 1][c - 1] != 'X':
-        #     visits[r - 1][c - 1] +=1
-            
-        if first_visit[r - 1][c - 1] == -1:
-            first_visit[r - 1][c - 1] = visit_count
-            
-        last_visit[r - 1][c - 1] = visit_count
-        visit_count += 1
 
         if curr == end:
             for i in range(rows):
@@ -60,23 +52,19 @@ def bfs_func(rows, cols, start, end, grid):
             if 1 <= neighbor[0] <= rows and 1 <= neighbor[1] <= cols:
                 if grid[neighbor[0] - 1][neighbor[1] - 1] != 'X':
                     
-                    visits[neighbor[0] - 1][neighbor[1] - 1] +=1
                     if (first_visit[neighbor[0] - 1][neighbor[1] - 1] == -1):
                         first_visit[neighbor[0] - 1][neighbor[1] - 1] = visit_count
-                    last_visit[neighbor[0] - 1][neighbor[1] - 1] = visit_count
+                    if neighbor != end:
+                        visits[neighbor[0] - 1][neighbor[1] - 1] +=1
+                        last_visit[neighbor[0] - 1][neighbor[1] - 1] = visit_count
+                    else:
+                        visits[neighbor[0] - 1][neighbor[1] - 1]  = 1
+                        last_visit[neighbor[0] - 1][neighbor[1] - 1] = first_visit[neighbor[0] - 1][neighbor[1] - 1]
                     visit_count += 1
+                    
                     if neighbor not in visited:
                         q.append((neighbor, path + [(neighbor[0], neighbor[1])]))
-                
-                    
-    for i in range(rows):
-        for j in range(cols):
-            if visits[i][j] == 0:
-                visits[i][j] = '.'
-            if first_visit[i][j] == -1:
-                first_visit[i][j] = '.'
-            if last_visit[i][j] == -1:
-                last_visit[i][j] = '.'          
+                          
     return None, None, None, None  
 
 def ucs_func(rows, cols, start, end, grid):
@@ -104,14 +92,7 @@ def ucs_func(rows, cols, start, end, grid):
     visit_count += 1
     
     while pq:
-        cost, _, (r, c) = heapq.heappop(pq)
-        
-        if first_visit[r - 1][c - 1] == -1:
-            first_visit[r - 1][c - 1] = visit_count
-            
-        last_visit[r - 1][c - 1] = visit_count
-        visit_count += 1
-        
+        cost, _, (r, c) = heapq.heappop(pq)       
         
         if (r, c) == end:
             
@@ -138,10 +119,9 @@ def ucs_func(rows, cols, start, end, grid):
             if 1 <= neighbor[0] <= rows and 1 <= neighbor[1] <= cols:
                 if grid[neighbor[0] - 1][neighbor[1] - 1] != 'X':
                     
-                    if grid[neighbor[0] - 1][neighbor[1] - 1] != 'X':
-                        visits[neighbor[0] - 1][neighbor[1] - 1] +=1
                     if (first_visit[neighbor[0] - 1][neighbor[1] - 1] == -1):
                         first_visit[neighbor[0] - 1][neighbor[1] - 1] = visit_count
+                    visits[neighbor[0] - 1][neighbor[1] - 1] +=1
                     last_visit[neighbor[0] - 1][neighbor[1] - 1] = visit_count
                     visit_count += 1
                     
@@ -189,12 +169,6 @@ def astar_func(rows, cols, start, end, grid, heuristic):
     while pq:
         _, current_cost, _, (r, c) = heapq.heappop(pq)
         
-        if first_visit[r - 1][c - 1] == -1:
-            first_visit[r - 1][c - 1] = visit_count
-            
-        last_visit[r - 1][c - 1] = visit_count
-        visit_count += 1
-        
         if (r, c) == end:
             
             for i in range(rows):
@@ -220,7 +194,7 @@ def astar_func(rows, cols, start, end, grid, heuristic):
             if 1 <= neighbor[0] <= rows and 1 <= neighbor[1] <= cols: 
                 if grid[neighbor[0] - 1][neighbor[1] - 1] != 'X':  
                     
-                    if grid[neighbor[0] - 1][neighbor[1] - 1] != 'X':
+                    if neighbor != end:
                         visits[neighbor[0] - 1][neighbor[1] - 1] +=1
                     if (first_visit[neighbor[0] - 1][neighbor[1] - 1] == -1):
                         first_visit[neighbor[0] - 1][neighbor[1] - 1] = visit_count
@@ -288,14 +262,17 @@ def main():
             for row in output_grid:
                 print(" ".join(row))
             print("#visits:")
+            max_width = max(len(str(cell)) for row in visits for cell in row)
             for row in visits:
-                print(" ".join(str(cell) for cell in row))
-            print("first visit:")
+                print("  ".join(str(cell).rjust(max_width) for cell in row))
+            print("\nfirst visit:")
+            max_width = max(len(str(cell)) for row in first_visit for cell in row)
             for row in first_visit:
-                print(" ".join(str(cell) for cell in row))
-            print("last visit:")
+                print("  ".join(str(cell).rjust(max_width) for cell in row))
+            print("\nlast visit:")
+            max_width = max(len(str(cell)) for row in last_visit for cell in row)
             for row in last_visit:
-                print(" ".join(str(cell) for cell in row))
+                print("  ".join(str(cell).rjust(max_width) for cell in row))
                         
 
 if __name__ == "__main__":
