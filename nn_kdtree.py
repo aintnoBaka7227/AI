@@ -13,23 +13,13 @@ class KdNode:
         self.left = None  
         self.right = None  
 
-# def FindMedian(P, d):
-#     sorted_idxs = P[:, d].argsort()
-#     median_idx = (len(P) - 1) // 2
-#     median_p = P[sorted_idxs[median_idx]]
-#     median_val = median_p[d]
+def FindMedian(P, d):
+    sorted_idxs = P[:, d].argsort()
+    median_idx = (len(P) - 1) // 2
+    median_p = P[sorted_idxs[median_idx]]
+    median_val = median_p[d]
     
-#     return median_p, median_val
-
-def FindMedian(points, dimension):
-    
-    sorted_points = points[points[:, dimension].argsort()]
-    
-    median_idx = (len(sorted_points)) // 2
-    median_point = sorted_points[median_idx]
-    median_value = median_point[dimension]
-    
-    return median_point, median_value
+    return median_p, median_val
 
 def BuildKdTree(P, D):
     if len(P) == 0:
