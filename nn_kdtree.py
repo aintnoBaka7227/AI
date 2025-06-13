@@ -15,9 +15,10 @@ class KdNode:
 
 def FindMedian(P, d):
     sorted_idxs = P[:, d].argsort()
-    median_idx = len(P) // 2
+    median_idx = (len(P) -1) // 2
     median_p = P[sorted_idxs[median_idx]]
     val = median_p[d]
+    
     return median_p, val
 
 def BuildKdTree(P, D):
@@ -125,7 +126,7 @@ def main():
     print('.' * input_dimension + 'r' + str(right_count))
     
     for test_pt in test_P:
-        best_point,_ = FindNearestNeighbor(root, test_pt)
+        best_point, _ = FindNearestNeighbor(root, test_pt)
         if best_point is not None:
             print(int(best_point[-1]))
  
