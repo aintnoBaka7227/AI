@@ -47,10 +47,10 @@ def BuildKdTree(P, D):
     for pt in P:
         if np.array_equal(pt, median_p):
             continue
-        if pt[d] <= val:
-            left_pts.append(pt)
-        else:
+        if pt[d] > val:
             right_pts.append(pt)
+        else:
+            left_pts.append(pt)
     
     left_pts = np.array(left_pts)
     right_pts = np.array(right_pts)
@@ -62,38 +62,38 @@ def BuildKdTree(P, D):
     
     return new_node
 
-def SearchOneNN(root, query_pt, best_point = None, best_distance = float('inf')):
-    if root is None:
-        return best_point, best_distance
+def SearchOneNN(root_node, query_pt, best_pt = None, best_dist = float('inf')):
+    if root_node is None:
+        return best_pt, best_dist
     
     dist_euclidean = 0
     for j in range(11):
-        dist_euclidean += (float(root.point[j]) - float(query_pt[j])) ** 2
+        dist_euclidean += (float(root_node.point[j]) - float(query_pt[j])) ** 2
     dist_euclidean = np.sqrt(dist_euclidean)
     
     
     
-    if dist_euclidean < best_distance:
-        best_distance = dist_euclidean
-        best_point = root.point
+    if dist_euclidean < best_dist:
+        best_dist = dist_euclidean
+        best_pt = root_node.point
         
     
-    if float(query_pt[root.dimension]) <= float(root.value):
-        best_point, best_distance = SearchOneNN(root.left, query_pt, best_point, best_distance)
+    if  float(root_node.value) >= float(query_pt[root_node.dimension]):
+        best_pt, best_dist = SearchOneNN(root_node.left, query_pt, best_pt, best_dist)
         
-        dist_lb = abs(float(query_pt[root.dimension]) - float(root.value))
+        dist_lb = abs(float(query_pt[root_node.dimension]) - float(root_node.value))
         
-        if dist_lb < best_distance:
-            best_point, best_distance = SearchOneNN(root.right, query_pt, best_point, best_distance)
+        if best_dist > dist_lb:
+            best_pt, best_dist = SearchOneNN(root_node.right, query_pt, best_pt, best_dist)
     else:
-        best_point, best_distance = SearchOneNN(root.right, query_pt, best_point, best_distance)
+        best_pt, best_dist = SearchOneNN(root_node.right, query_pt, best_pt, best_dist)
     
-        dist_lb = abs(float(query_pt[root.dimension]) - float(root.value))
+        dist_lb = abs(float(query_pt[root_node.dimension]) - float(root_node.value))
     
-        if dist_lb < best_distance:
-            best_point, best_distance = SearchOneNN(root.left, query_pt, best_point, best_distance)
+        if best_dist > dist_lb:
+            best_pt, best_dist = SearchOneNN(root_node.left, query_pt, best_pt, best_dist)
     
-    return best_point, best_distance
+    return best_pt, best_dist
 
 def main():
     train_file = sys.argv[1]
@@ -109,26 +109,26 @@ def main():
     train_P = train.values.astype(float)
     test_P = test.values.astype(float)
     
-    root = BuildKdTree(train_P, scaled_dimension)
+    root_node = BuildKdTree(train_P, scaled_dimension)
     
-    left_count = 0
-    right_count = 0
+    left_subtree_count = 0
+    right_subtree_count = 0
     
     for p in train_P:
-        if np.array_equal(p, root.point):
+        if np.array_equal(p, root_node.point):
             continue
-        if p[scaled_dimension] <= root.value:
-            left_count += 1
+        if p[scaled_dimension] <= root_node.value:
+            left_subtree_count += 1
         else:
-            right_count += 1
+            right_subtree_count += 1
     
-    print('.' * input_dimension + 'l' + str(left_count))
-    print('.' * input_dimension + 'r' + str(right_count))
+    print('.' * input_dimension + 'l' + str(left_subtree_count))
+    print('.' * input_dimension + 'r' + str(right_subtree_count))
     
     for test_pt in test_P:
-        best_point, _ = SearchOneNN(root, test_pt)
-        if best_point is not None:
-            print(int(best_point[-1]))
+        best_pt, _ = SearchOneNN(root_node, test_pt)
+        if best_pt is not None:
+            print(int(best_pt[-1]))
  
 
 if __name__ == "__main__":
