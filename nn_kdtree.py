@@ -67,7 +67,7 @@ def FindNearestNeighbor(root, query_pt, best_point = None, best_distance = float
     
     dist_euclidean = 0
     for j in range(11):
-        dist_euclidean += (root.point[j] - query_pt[j]) ** 2
+        dist_euclidean += (float(root.point[j]) - float(query_pt[j])) ** 2
     dist_euclidean = np.sqrt(dist_euclidean)
     
     
@@ -77,17 +77,17 @@ def FindNearestNeighbor(root, query_pt, best_point = None, best_distance = float
         best_point = root.point
         
     
-    if query_pt[root.dimension] <= root.value:
+    if float(query_pt[root.dimension]) <= float(root.value):
         best_point, best_distance = FindNearestNeighbor(root.left, query_pt, best_point, best_distance)
         
-        dist_lb = abs(query_pt[root.dimension] - root.value)
+        dist_lb = abs(float(query_pt[root.dimension]) - float(root.value))
         
         if dist_lb < best_distance:
             best_point, best_distance = FindNearestNeighbor(root.right, query_pt, best_point, best_distance)
     else:
         best_point, best_distance = FindNearestNeighbor(root.right, query_pt, best_point, best_distance)
     
-        dist_lb = abs(query_pt[root.dimension] - root.value)
+        dist_lb = abs(float(query_pt[root.dimension]) - float(root.value))
     
         if dist_lb < best_distance:
             best_point, best_distance = FindNearestNeighbor(root.left, query_pt, best_point, best_distance)
@@ -99,11 +99,16 @@ def main():
     test_file = sys.argv[2]
     input_dimension = int(sys.argv[3])
     
+    # Read data and skip header row
     train = pd.read_fwf(train_file)
     test = pd.read_fwf(test_file)
     
-    train_P = train.values
-    test_P = test.values
+    # Convert to float arrays
+    train_P = train.values.astype(float)
+    test_P = test.values.astype(float)
+    
+    print("Test data:")
+    print(test_P)
     
     root = BuildKdTree(train_P, input_dimension)
     
