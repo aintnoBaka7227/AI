@@ -13,13 +13,23 @@ class KdNode:
         self.left = None  
         self.right = None  
 
-def FindMedian(P, d):
-    sorted_idxs = P[:, d].argsort()
-    median_idx = (len(P) - 1) // 2
-    median_p = P[sorted_idxs[median_idx]]
-    median_val = median_p[d]
+# def FindMedian(P, d):
+#     sorted_idxs = P[:, d].argsort()
+#     median_idx = (len(P) - 1) // 2
+#     median_p = P[sorted_idxs[median_idx]]
+#     median_val = median_p[d]
     
-    return median_p, median_val
+#     return median_p, median_val
+
+def FindMedian(points, dimension):
+    
+    sorted_points = points[points[:, dimension].argsort()]
+    
+    median_idx = (len(sorted_points)) // 2
+    median_point = sorted_points[median_idx]
+    median_value = median_point[dimension]
+    
+    return median_point, median_value
 
 def BuildKdTree(P, D):
     if len(P) == 0:
@@ -62,7 +72,7 @@ def BuildKdTree(P, D):
     
     return new_node
 
-def FindNearestNeighbor(root, query_pt, best_point = None, best_distance = float('inf')):
+def SearchOneNN(root, query_pt, best_point = None, best_distance = float('inf')):
     if root is None:
         return best_point, best_distance
     
@@ -79,19 +89,19 @@ def FindNearestNeighbor(root, query_pt, best_point = None, best_distance = float
         
     
     if float(query_pt[root.dimension]) <= float(root.value):
-        best_point, best_distance = FindNearestNeighbor(root.left, query_pt, best_point, best_distance)
+        best_point, best_distance = SearchOneNN(root.left, query_pt, best_point, best_distance)
         
         dist_lb = abs(float(query_pt[root.dimension]) - float(root.value))
         
         if dist_lb < best_distance:
-            best_point, best_distance = FindNearestNeighbor(root.right, query_pt, best_point, best_distance)
+            best_point, best_distance = SearchOneNN(root.right, query_pt, best_point, best_distance)
     else:
-        best_point, best_distance = FindNearestNeighbor(root.right, query_pt, best_point, best_distance)
+        best_point, best_distance = SearchOneNN(root.right, query_pt, best_point, best_distance)
     
         dist_lb = abs(float(query_pt[root.dimension]) - float(root.value))
     
         if dist_lb < best_distance:
-            best_point, best_distance = FindNearestNeighbor(root.left, query_pt, best_point, best_distance)
+            best_point, best_distance = SearchOneNN(root.left, query_pt, best_point, best_distance)
     
     return best_point, best_distance
 
@@ -99,7 +109,7 @@ def main():
     train_file = sys.argv[1]
     test_file = sys.argv[2]
     input_dimension = int(sys.argv[3])
-    scaled_dimension = input_dimension % 12
+    scaled_dimension = input_dimension % 11
     
     # Read data and skip header row
     train = pd.read_fwf(train_file, skiprows=1, header=None)
@@ -126,7 +136,7 @@ def main():
     print('.' * input_dimension + 'r' + str(right_count))
     
     for test_pt in test_P:
-        best_point, _ = FindNearestNeighbor(root, test_pt)
+        best_point, _ = SearchOneNN(root, test_pt)
         if best_point is not None:
             print(int(best_point[-1]))
  
