@@ -100,15 +100,12 @@ def main():
     input_dimension = int(sys.argv[3])
     
     # Read data and skip header row
-    train = pd.read_fwf(train_file)
-    test = pd.read_fwf(test_file)
+    train = pd.read_fwf(train_file, skiprows=1, header=None)
+    test = pd.read_fwf(test_file, skiprows=1, header=None)
     
     # Convert to float arrays
     train_P = train.values.astype(float)
     test_P = test.values.astype(float)
-    
-    print("Test data:")
-    print(test_P)
     
     root = BuildKdTree(train_P, input_dimension)
     
