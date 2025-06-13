@@ -98,6 +98,7 @@ def main():
     train_file = sys.argv[1]
     test_file = sys.argv[2]
     input_dimension = int(sys.argv[3])
+    input_dimension = input_dimension % 12
     
     # Read data and skip header row
     train = pd.read_fwf(train_file, skiprows=1, header=None)
@@ -107,7 +108,7 @@ def main():
     train_P = train.values.astype(float)
     test_P = test.values.astype(float)
     
-    root = BuildKdTree(train_P, input_dimension % 12)
+    root = BuildKdTree(train_P, input_dimension)
     
     left_count = 0
     right_count = 0
