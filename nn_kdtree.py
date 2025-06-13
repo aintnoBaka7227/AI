@@ -107,7 +107,7 @@ def main():
     train_P = train.values.astype(float)
     test_P = test.values.astype(float)
     
-    root = BuildKdTree(train_P, input_dimension % 11)
+    root = BuildKdTree(train_P, input_dimension % 12)
     
     left_count = 0
     right_count = 0
